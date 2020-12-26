@@ -20,6 +20,6 @@ import (
 )
 
 // VMLimits returns the soft and hard limits for virtual memory.
-func VMLimits() string {
+func VMLimits() (string, error) {
 	return getLimits(syscall.RLIMIT_DATA, "b")
 }

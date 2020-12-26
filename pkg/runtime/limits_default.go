@@ -17,6 +17,7 @@ package runtime
 
 import (
 	"fmt"
+	"log"
 	"syscall"
 )
 
@@ -32,16 +33,16 @@ func limitToString(v uint64, unit string) string {
 	return fmt.Sprintf("%d%s", v, unit)
 }
 
-func getLimits(resource int, unit string) string {
+func getLimits(resource int, unit string) (string, error) {
 	rlimit := syscall.Rlimit{}
 	err := syscall.Getrlimit(resource, &rlimit)
 	if err != nil {
-		panic("syscall.Getrlimit failed: " + err.Error())
+		log.Println("syscall.Getrlimit failed: " + err.Error())
 	}
-	return fmt.Sprintf("(soft=%s, hard=%s)", limitToString(uint64(rlimit.Cur), unit), limitToString(uint64(rlimit.Max), unit))
+	return fmt.Sprintf("(soft=%s, hard=%s)", limitToString(uint64(rlimit.Cur), unit), limitToString(uint64(rlimit.Max), unit)), err
 }
 
 // FdLimits returns the soft and hard limits for file descriptors.
-func FdLimits() string {
+func FdLimits() (string, error) {
 	return getLimits(syscall.RLIMIT_NOFILE, "")
 }
