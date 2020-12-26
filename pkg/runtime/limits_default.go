@@ -17,7 +17,6 @@ package runtime
 
 import (
 	"fmt"
-	"log"
 	"syscall"
 )
 
@@ -36,9 +35,6 @@ func limitToString(v uint64, unit string) string {
 func getLimits(resource int, unit string) (string, error) {
 	rlimit := syscall.Rlimit{}
 	err := syscall.Getrlimit(resource, &rlimit)
-	if err != nil {
-		log.Println("syscall.Getrlimit failed: " + err.Error())
-	}
 	return fmt.Sprintf("(soft=%s, hard=%s)", limitToString(uint64(rlimit.Cur), unit), limitToString(uint64(rlimit.Max), unit)), err
 }
 

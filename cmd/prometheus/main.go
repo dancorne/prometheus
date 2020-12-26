@@ -364,10 +364,18 @@ func main() {
 
 	level.Info(logger).Log("build_context", version.BuildContext())
 	level.Info(logger).Log("host_details", prom_runtime.Uname())
-	fdLimits, _ := prom_runtime.FdLimits()
-	vmLimits, _ := prom_runtime.VMLimits()
-	level.Info(logger).Log("fd_limits", fdLimits)
-	level.Info(logger).Log("vm_limits", vmLimits)
+	fdLimits, err := prom_runtime.FdLimits()
+	if err != nil {
+		level.Warn(logger).Log("syscall.Getrlimit failed: " + err.Error())
+	} else {
+		level.Info(logger).Log("fd_limits", fdLimits)
+	}
+	vmLimits, err := prom_runtime.VMLimits()
+	if err != nil {
+		level.Warn(logger).Log("msg", "syscall.Getrlimit failed: "+err.Error())
+	} else {
+		level.Info(logger).Log("msg", "vm_limits", vmLimits)
+	}
 
 	var (
 		localStorage  = &readyStorage{}
